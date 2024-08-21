@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  main:
+    build:
+      context: ../..
+      dockerfile: etc/docker/Dockerfile.dev
+    command: "sh -c 'tail -f /dev/null'"
+    environment:
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ../..:/home/devuser/tsp-opt
+    network_mode: "host"
