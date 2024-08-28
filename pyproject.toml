@@ -7,7 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2.8.2",
     "polars>=1.5.0",
-    "pandera>=0.20.3",
+    "pandera[polars]>=0.20.3",
     "numpy>=2.1.0",
     "scipy>=1.14.1",
     "pulp>=2.9.0",
