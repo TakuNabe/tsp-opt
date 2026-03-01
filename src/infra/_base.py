@@ -91,3 +91,28 @@ class BaseRepository(ABC):
             list[dict]: Records that match the name.
         """
         raise NotImplementedError
+
+
+class BaseWritableRepository(BaseRepository):
+    """Base class for repositories with write capabilities."""
+
+    @abstractmethod
+    def save(self, df: pl.DataFrame) -> None:
+        """Save the DataFrame, replacing all existing data.
+
+        Args: -----
+            df (pl.DataFrame): The DataFrame to save.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def delete_by_id(self, id_: str) -> pl.DataFrame:
+        """Delete records by ID and return the resulting DataFrame.
+
+        Args: -----
+            id_ (str): The ID of records to delete.
+
+        Returns:
+            pl.DataFrame: The resulting DataFrame after deletion.
+        """
+        raise NotImplementedError

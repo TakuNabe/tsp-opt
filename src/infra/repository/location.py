@@ -5,10 +5,10 @@ import polars as pl
 from pandera.typing import DataFrame
 
 from src.domain.model import LocationSchema
-from src.infra._base import BaseRepository, BaseStorageAdapter, PathLike
+from src.infra._base import BaseStorageAdapter, BaseWritableRepository, PathLike
 
 
-class StorageLocationRepository(BaseRepository):
+class StorageLocationRepository(BaseWritableRepository):
     """Repository for locations data using a storage adapter."""
 
     def __init__(self, storage_adapter: BaseStorageAdapter, uri: PathLike) -> None:
@@ -53,3 +53,24 @@ class StorageLocationRepository(BaseRepository):
             list[dict]: Location records which match the name.
         """
         return self.read_as_polars().filter(pl.col(LocationSchema.name) == name).to_dicts()
+
+    def save(self, df: pl.DataFrame) -> None:
+        """Save the DataFrame to the storage URI, replacing all existing data.
+
+        Args: -----
+            df (pl.DataFrame): The DataFrame to save.
+        """
+        self._storage_adapter.write_polars_as_csv(df, self._uri)
+
+    def delete_by_id(self, id_: str) -> pl.DataFrame:
+        """Delete location records by ID, persist, and return the resulting DataFrame.
+
+        Args: -----
+            id_ (str): The ID of records to delete.
+
+        Returns:
+            pl.DataFrame: The resulting DataFrame after deletion.
+        """
+        filtered = self.read_as_polars().filter(pl.col(LocationSchema.id) != id_)
+        self.save(filtered)
+        return filtered
